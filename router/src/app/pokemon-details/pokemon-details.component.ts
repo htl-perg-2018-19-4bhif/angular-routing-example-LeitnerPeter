@@ -2,10 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-interface IPokemonDetail {
+interface IPokemonResult {
   name: string;
   abilities: any[];
-  abilityList: string[];
+}
+
+class pokemondetail{
+  name: string;
+  abilities: string[];
 }
 
 @Component({
@@ -15,7 +19,8 @@ interface IPokemonDetail {
 })
 export class PokemonDetailsComponent implements OnInit {
   pokemonId = "";
-  pokemondetail: IPokemonDetail = { name: "", abilities: [], abilityList: [] };
+  pokemonresult: IPokemonResult = { name: "", abilities: []};
+  pokemondetail: pokemondetail = { name: "", abilities: []};
 
   constructor(private route: ActivatedRoute, private http: HttpClient) { 
     route.paramMap.subscribe(map => {
@@ -28,11 +33,11 @@ export class PokemonDetailsComponent implements OnInit {
   }
 
   async loadPokeDetails() {
-    this.pokemondetail = await this.http.get<IPokemonDetail>(`https://pokeapi.co/api/v2/pokemon/${this.pokemonId}`).toPromise();
+    this.pokemonresult = await this.http.get<IPokemonResult>(`https://pokeapi.co/api/v2/pokemon/${this.pokemonId}`).toPromise();
     
-    this.pokemondetail.abilityList = [];
-    for (let i = 0; i < this.pokemondetail.abilities.length; i++){
-      this.pokemondetail.abilityList.push(this.pokemondetail.abilities[i].ability.name);
+    this.pokemondetail.name = this.pokemonresult.name;
+    for (let i = 0; i < this.pokemonresult.abilities.length; i++){
+      this.pokemondetail.abilities.push(this.pokemonresult.abilities[i].ability.name);
     }
   }
 
